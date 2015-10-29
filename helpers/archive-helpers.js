@@ -51,39 +51,19 @@ exports.addUrlToList = function (url, callback) {
   callback();
 };
 
-//  solution branch
-//  exports.isUrlArchived = function(url, callback){
-//    var sitePath = path.join(exports.paths.archivedSites, url);
-//    fs.exists(sitePath, function(exists) {
-//      callback(exists);
-//    });
-//  };
-
 exports.isUrlArchived = function (url, callback) {
   var sitePath = path.join(exports.paths.archivedSites, url);
   fs.exists(sitePath, function (exists) {
     callback(exists);
   });
-  //exports.readListOfUrls(function (sites) {
-  //  var found = _.any(sites, function (sites, i) {
-  //    return sites.match(url)
-  //  });
-  //  callback(found)
-  //});
 };
 
-//  solution branch
-//  exports.downloadUrls = function(urls){
-//    // Iterate over urls and pipe to new files
-//  };
-
 exports.downloadUrls = function (urls) {
+  // Iterate over urls and pipe to new files
   _.each(urls, function (url) {
     if (!url) {
       return;
     }
     request('http://' + url).pipe(fs.createWriteStream(exports.paths.archivedSites + "/" + url));
   });
-  //request(url).pipe(fs.createWriteStream(".html"));
-  //callback()
 };
