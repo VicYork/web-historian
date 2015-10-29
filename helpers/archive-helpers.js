@@ -1,6 +1,7 @@
 var fs = require('fs');
 var path = require('path');
 var _ = require('underscore');
+var request = require("request");
 
 /*
  * You will need to reuse the same paths many times over in the course of this sprint.
@@ -18,8 +19,8 @@ exports.paths = {
 };
 
 // Used for stubbing paths for tests, do not modify
-exports.initialize = function(pathsObj){
-  _.each(pathsObj, function(path, type) {
+exports.initialize = function (pathsObj) {
+  _.each(pathsObj, function (path, type) {
     exports.paths[type] = path;
   });
 };
@@ -46,13 +47,43 @@ exports.isUrlInList = function (url, callback) {
 };
 
 exports.addUrlToList = function (url, callback) {
-  fs.appendFile(exports.paths.list, '\n' + url);
+  fs.appendFile(exports.paths.list, url + '\n');
   callback();
 };
 
+//  solution branch
+//  exports.isUrlArchived = function(url, callback){
+//    var sitePath = path.join(exports.paths.archivedSites, url);
+//    fs.exists(sitePath, function(exists) {
+//      callback(exists);
+//    });
+//  };
 
-exports.isUrlArchived = function(){
+exports.isUrlArchived = function (url, callback) {
+  var sitePath = path.join(exports.paths.archivedSites, url);
+  fs.exists(sitePath, function (exists) {
+    callback(exists);
+  });
+  //exports.readListOfUrls(function (sites) {
+  //  var found = _.any(sites, function (sites, i) {
+  //    return sites.match(url)
+  //  });
+  //  callback(found)
+  //});
 };
 
-exports.downloadUrls = function(){
+//  solution branch
+//  exports.downloadUrls = function(urls){
+//    // Iterate over urls and pipe to new files
+//  };
+
+exports.downloadUrls = function (urls) {
+  _.each(urls, function (url) {
+    if (!url) {
+      return;
+    }
+    request('http://' + url).pipe(fs.createWriteStream(exports.paths.archivedSites + "/" + url));
+  });
+  //request(url).pipe(fs.createWriteStream(".html"));
+  //callback()
 };
